@@ -2,7 +2,8 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class AuthController {
   public async loginView({ auth, view, response }: HttpContextContract) {
-    if (auth.isGuest) return view.render('pages/login')
+    const isAuth = await auth.check()
+    if (!isAuth) return view.render('pages/login')
     response.redirect().back()
   }
 

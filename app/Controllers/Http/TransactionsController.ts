@@ -41,10 +41,17 @@ export default class TransactionsController {
     return view.render('pages/transactions/create')
   }
 
-  public async show({ view, params }: HttpContextContract) {
+  public async show({ view, params, auth, response }: HttpContextContract) {
     const { id } = params
+
     const transaction = await Transaction.findOrFail(id)
     await Promise.all([transaction.preload('user'), transaction.preload('items')])
+
+    const isAdmin = (auth.user?.level as number) > 0
+    const notOwned = auth.user?.id !== transaction.user.id
+    if (!isAdmin && notOwned) {
+      return response.redirect('/notfound')
+    }
 
     const items = transaction.items.map((item) => {
       const name = item.fullName
