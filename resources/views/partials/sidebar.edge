@@ -1,0 +1,41 @@
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <a href="index3.html" class="brand-link">
+    <img src="/logo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+         style="opacity: .8">
+    <span class="brand-text font-weight-light">Hack Sneaker</span>
+  </a>
+
+  <div class="sidebar">
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+
+      <div class="info">
+        <a href="#" class="d-block"><b>{{ auth.user.fullName }}</b> - {{ auth.user.role }}</a>
+      </div>
+    </div>
+
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <li class="nav-item">
+          <a href="{{ route('TransactionsController.index') }}" class="nav-link">
+            <i class="nav-icon fas fa-file-invoice"></i>
+            <p>Transaksi</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ route('ProductsController.index') }}" class="nav-link">
+            <i class="nav-icon fas fa-box"></i>
+            <p>Item</p>
+          </a>
+        </li>
+        @if (auth.user.isAdmin)
+          <li class="nav-item">
+            <a href="{{ route('UsersController.index') }}" class="nav-link">
+              <i class="nav-icon fas fa-users"></i>
+              <p>User Management</p>
+            </a>
+          </li>
+        @endif
+      </ul>
+    </nav>
+  </div>
+</aside>

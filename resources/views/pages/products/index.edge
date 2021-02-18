@@ -1,0 +1,87 @@
+@layout('layouts/main.edge')
+
+@section('head')
+  @super
+  <title>List Barang | Hack Sneaker</title>
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+@endsection
+
+@section('content')
+
+  @component('components/content/header', { icon: 'fa fa-box', title: 'List Item' })
+    <a href="{{ route('ProductsController.create') }}" class="btn btn-primary float-lg-right"><i class="fas fa-plus"></i> Add item</a>
+  @endcomponent
+
+  @component('components/content/content')
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+
+          <div class="card-body">
+
+            @if(flashMessages.has('success'))
+              <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <h5><i class="icon fas fa-info"></i> Alert!</h5>
+                {{ flashMessages.get('success') }}
+              </div>
+            @endif
+
+            <table id="product-table" class="table table-bordered table-striped text-center">
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Nama</th>
+                  <th>Merek</th>
+                  <th>Harga</th>
+                  <th>Tanggal Input</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                @each(item in products)
+                  <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.brand }}</td>
+                    <td>{{ item.priceCurrency }}</td>
+                    <td class="time">{{ item.createdAt }}</td>
+                    <td>
+                      <a class="btn btn-primary btn-sm" href="{{ route('ProductsController.show', { id: item.id }) }}">
+                        <i class="fas fa-folder"></i>View
+                      </a>
+                      <a class="btn btn-info btn-sm" href="{{ route('ProductsController.edit', { id: item.id }) }}">
+                        <i class="fas fa-pencil-alt"></i>Edit
+                      </a>
+                      @if(auth.user.level > 0)
+                        <form class="d-inline" method="POST" action="{{ route('ProductsController.destroy', { id: item.id }) }}?_method=DELETE">
+                          <button class="btn btn-danger btn-sm"><i class="fas fa-edit"></i> Delete Item</button>
+                        </form>
+                      @endif
+                    </td>
+                  </tr>
+                @endeach
+              </tbody>
+            </table>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  @endcomponent
+
+@endsection
+
+@section('script')
+  @super
+  <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+  <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+  <script src="/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+  <script src="/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+  <script>
+    $(function () {
+      $("#product-table").DataTable({ "responsive": true, "autoWidth": false })
+    })
+  </script>
+@endsection

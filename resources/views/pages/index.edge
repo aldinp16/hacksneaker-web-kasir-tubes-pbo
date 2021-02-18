@@ -1,0 +1,10 @@
+@layout('layouts/main.edge')
+
+@section('head')
+  @super
+  <title>Hack Sneaker</title>
+@endsection
+
+@section('content')
+  <p>{{ auth.user.fullName }}</p>
+@endsection

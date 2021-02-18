@@ -1,0 +1,53 @@
+@layout('layouts/main.edge')
+
+@section('head')
+  @super
+  <title>{{ user.fullName }} | Hack Sneaker</title>
+@endsection
+
+@section('content')
+
+  @component('components/content/header', { icon: 'fa fa-user', title: user.fullName })
+    <form  method="POST" action="{{ route('UsersController.destroy', { id: user.id }) }}?_method=DELETE">
+      <button class="btn btn-danger float-lg-right m-1 text-light"><i class="fas fa-edit"></i> Delete Item</button>
+    </form>
+    <a href="{{ route('UsersController.edit', { id: user.id }) }}" class="btn btn-info float-lg-right m-1 text-light"><i class="fas fa-trash"></i> Update User</a>
+  @endcomponent
+
+  @component('components/content/content')
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+
+          <div class="card-header">
+            <h2 class="card-title"><i class="fas fa-text-width"></i> Description</h2>
+          </div>
+
+          <div class="card-body">
+            @if(flashMessages.has('success'))
+              <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <h5><i class="icon fas fa-info"></i> Alert!</h5>
+                {{ flashMessages.get('success') }}
+              </div>
+            @endif
+            <dl class="row">
+              <dt class="col-sm-4">Nama</dt>
+              <dd class="col-sm-8">{{ user.fullName }}</dd>
+              <dt class="col-sm-4">Email</dt>
+              <dd class="col-sm-8">{{ user.email }}</dd>
+              <dt class="col-sm-4">Level</dt>
+              <dd class="col-sm-8">{{ user.role }}</dd>
+              <dt class="col-sm-4">Tanggal ditambahkan</dt>
+              <dd class="col-sm-8 time">{{ user.createdAt }}</dd>
+              <dt class="col-sm-4">Terakhir diupdate</dt>
+              <dd class="col-sm-8 time">{{ user.updatedAt }}</dd>
+            </dl>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  @endcomponent
+
+@endsection

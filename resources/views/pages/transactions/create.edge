@@ -1,0 +1,198 @@
+@layout('layouts/main.edge')
+
+@section('head')
+  @super
+  <title>Buat Transaksi | Hack Sneaker</title>
+  <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
+  <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+@endsection
+
+@section('content')
+
+  @component('components/content/header', { title: 'Buat Transaksi', icon: 'fa fa-plus' })
+  @endcomponent
+
+  @component('components/content/content')
+    <form action="{{ route('TransactionsController.store') }}" method="POST">
+      <div class="row">
+        <div class="col-md-6 col-xs-12 mb-4">
+          <div class="card card-primary h-100">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fa fa-plus"></i> Detail Transaksi</h3>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="name">Cashier Name</label>
+                <input type="text" class="form-control" value="{{ auth.user.fullName }}" disabled>
+              </div>
+              <div class="form-group">
+                <label for="name">Customer Name</label>
+                <input name="customer_name" type="text" class="form-control" id="name" placeholder="Hongki Alfikram">
+              </div>
+              <div class="form-group">
+                <label for="payment_method">Payment payment_method</label>
+                <input name="payment_method" type="text" class="form-control" id="payment_method" placeholder="Cash" value="Cash" required>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-4">
+          <div class="card card-primary h-100">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fa fa-plus"></i> Catatan</h3>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <textarea rows="10" class="form-control" id="note" name="note" style="resize: none"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="discount_voucher">Discount (%)</label>
+                <input onchange="calculateAll()" name="discount_voucher" type="number" class="form-control" id="discount_voucher" placeholder="10" value="0">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fa fa-plus"></i> List item</h3>
+              <button onClick="addItem()" id="add-item" type="button" class="btn btn-success btn-sm float-right"><i class="fas fa-plus"></i> Add Item</button>
+            </div>
+            <div class="card-body table-responsive p-0">
+              <table id="items" class="table table-head-fixed text-nowrap">
+                <thead>                  
+                  <tr>
+                    <th>#</th>
+                    <th style="width: 40%">Name</th>
+                    <th>Price (Rp)</th>
+                    <th>Quantity</th>
+                    <th>Discount (%)</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>#</td>
+                    <td><input name="item_id[0]" type="hidden">
+                      <select name="name[0]" class="form-control" style="width:100%"></select>
+                    </td>
+                    <td><input name="price[0]" type="number" class="form-control uang" disabled></td>
+                    <td><input name="quantity[0]" type="number" class="form-control" placeholder="1" value=1 required></td>
+                    <td><input name="discount[0]" type="number" class="form-control" placeholder="10" min="0" max="100" value=0></td>
+                    <td><button id="remove-btn" type="button" class="btn btn-danger" onClick="removeItem(this)"><i class="fa fa-minus"></i> Hapus</button></td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th colspan="2" class="text-right">Voucher discount</th>
+                    <th></th>
+                    <th></th>
+                    <th id="display_voucher_discount" class="text-left" colspan="2">Rp. 0</th>
+                  </tr>
+                  <tr>
+                    <th colspan="2" class="text-right">Total</th>
+                    <th class="text-center" id="total_price">Rp. 0</th>
+                    <th class="text-center" id="total_quantity">0</th>
+                    <th class="text-left" id="total_discount" colspan="2">Rp. 0</th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 text-right">
+          <input type="submit" class="btn btn-primary mb-5 mt-2" value="Buat Transaksi!" />
+        </div>
+      </div>
+    </form>
+
+  @endcomponent
+
+@endsection
+
+@section('script')
+  @super
+  <script src="/plugins/jquery-mask/jquery.mask.min.js"></script>
+  <script src="/plugins/select2/js/select2.full.min.js"></script>
+  <script>
+
+    $(function () {
+      initSelect2(0)
+      $('#items').on('change', 'input', calculateAll)
+    })
+
+
+    function calculateAll () {
+      const total = $('#items >tbody>tr').map(function() {
+        const discountVal = (+$(this).find('input[name^="discount"]').val()).toFixed(2)
+        const priceVal = +$(this).find('input[name^="price"]').val()
+        const quantity = +$(this).find('input[name^="quantity"').val()
+        
+        const discount = (discountVal/100) * priceVal
+        const price = (priceVal - discount) * quantity
+        return { quantity, discount: discount * quantity, price }
+      }).get()
+
+      const mapReduce = (keyMap, arr) => arr.map((x) => x[keyMap]).reduce((x, y) => x + y, 0)
+
+      const qty = mapReduce('quantity', total)
+      const price = mapReduce('price', total)
+      const discount = mapReduce('discount', total)
+
+      const voucherDiscountVal = $('input[name="discount_voucher"]').val()
+
+      const voucherDiscount = (voucherDiscountVal/100) * price
+      $('#display_voucher_discount').html('Rp. -' + voucherDiscount)
+      $('#total_quantity').html(qty)
+      $('#total_price').html('Rp. ' + (price - voucherDiscount))
+      $('#total_discount').html('Rp. -' + (discount + voucherDiscount))
+    }
+
+
+    function initSelect2 (id) {
+      $(`select[name="name[${id}]"]`)
+        .select2({
+          theme: 'bootstrap4',
+          placeholder: 'Search for item',
+          ajax: {
+            url: '/api/products',
+            dataType: 'json',
+            processResults: function (data) {
+              return { results: data.map(({ id, full_name, price }) => ({ id, text: full_name, price })) }
+            }
+          }
+        })
+        .on('select2:select', function (e) {
+          $(`input[name="item_id[${id}]"]`).val(e.params.data.id)
+          $(`input[name="price[${id}]"]`).val(e.params.data.price)
+          calculateAll()
+        })
+    }
+
+    function addItem () {
+      const length = $('#items >tbody >tr').length
+        $('#items >tbody')
+          .append(`
+            <tr>
+              <td>#</td>
+              <td><input name="item_id[${length}]" type="hidden"><select name="name[${length}]" class="form-control select2" style="width:100%"></select></td>
+              <td><input name="price[${length}]" type="number" class="form-control" disabled></td>
+              <td><input name="quantity[${length}]" type="number" class="form-control" placeholder="1" required value=1></td>
+              <td><input name="discount[${length}]" type="number" class="form-control" placeholder="10" value=0 min="0" max="100"></td>
+              <td><button id="remove-btn" type="button" class="btn btn-danger" onClick="removeItem(this)"><i class="fa fa-minus"></i> Hapus</button></td>
+            </tr>
+          `);
+        initSelect2(length)
+    }
+
+    function removeItem(e) {
+      $(e).parents('tr').remove();
+      calculateAll()
+    }
+    
+  </script>
+@endsection

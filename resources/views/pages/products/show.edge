@@ -1,0 +1,61 @@
+@layout('layouts/main.edge')
+
+@section('head')
+  @super
+  <title>{{ product.fullName }} | Hack Sneaker</title>
+@endsection
+
+@section('content')
+
+  @component('components/content/header', { icon: 'fa fa-box', title: product.fullName })
+    
+    @if(auth.user.level > 0) 
+      <form  method="POST" action="{{ route('ProductsController.destroy', { id: product.id }) }}?_method=DELETE">
+        <button class="btn btn-danger float-lg-right m-1 text-light"><i class="fas fa-edit"></i> Delete Item</button>
+      </form>
+    @endif
+
+    <a href="{{ route('ProductsController.edit', { id: product.id }) }}" class="btn btn-info float-lg-right m-1 text-light"><i class="fas fa-trash"></i> Update Item</a>
+    @endcomponent
+
+  @component('components/content/content')
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+
+          <div class="card-header">
+            <h2 class="card-title"><i class="fas fa-text-width"></i> Description</h2>
+          </div>
+
+          <div class="card-body">
+
+            @if(flashMessages.has('success'))
+              <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <h5><i class="icon fas fa-info"></i> Alert!</h5>
+                {{ flashMessages.get('success') }}
+              </div>
+            @endif
+
+            <dl class="row">
+              <dt class="col-sm-4">Nama</dt>
+              <dd class="col-sm-8">{{ product.name }}</dd>
+              <dt class="col-sm-4">Brand</dt>
+              <dd class="col-sm-8">{{ product.brand }}</dd>
+              <dt class="col-sm-4">Price</dt>
+              <dd class="col-sm-8">{{ product.priceCurrency }}</dd>
+              <dt class="col-sm-4">Tanggal ditambahkan</dt>
+              <dd class="col-sm-8 time">{{ product.createdAt }}</dd>
+              <dt class="col-sm-4">Terakhir diupdate</dt>
+              <dd class="col-sm-8 time">{{ product.updatedAt }}</dd>
+              <dt class="col-sm-4">Note</dt>
+              <dd class="col-sm-8">{{ product.note }}</dd>
+            </dl>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  @endcomponent
+
+@endsection

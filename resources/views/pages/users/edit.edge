@@ -1,0 +1,66 @@
+@layout('layouts/main.edge')
+
+@section('head')
+  @super
+  <title>{{ user.fullName }} - Edit | Hack Sneaker</title>
+@endsection
+
+@section('content')
+
+  @component('components/content/header')
+  @endcomponent
+
+  @component('components/content/content')
+  <div class="row">
+    <div class="col-12">
+      <div class="card card-primary">
+
+        <div class="card-header">
+          <h3 class="card-title"><i class="fa fa-edit"></i> Edit User</h3>
+          <form class="d-inline" method="POST" action="{{ route('UsersController.destroy', { id: user.id }) }}?_method=DELETE">
+            <button class="btn btn-danger btn-sm float-lg-right"><i class="fas fa-edit"></i> Delete Item</button>
+          </form>
+        </div>
+
+        <form role="form" action="{{ route('UsersController.update', { id: user.id }) }}?_method=PUT" method="POST">
+          <div class="card-body">
+            <div class="form-group">
+              <label for="fullName">Nama</label>
+              <input name="fullName" type="text" class="form-control" id="fullName" placeholder="Hongki Alfikram" value="{{ user.fullName }}" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input name="email" type="email" class="form-control" id="email" placeholder="hongki@gmail.com" value="{{ user.email }}">
+            </div>
+            <div class="form-group">
+              <label for="current_password">Current Password</label>
+              <input name="current_password" type="password" class="form-control" id="current_password">
+            </div>
+            <div class="form-group">
+              <label for="new_password">New Password</label>
+              <input name="new_password" type="new_password" class="form-control" id="new_password">
+            </div>
+            <div class="form-group">
+              <label for="level">Level</label>
+              <select name="level" type="text" class="form-control" id="level" value="{{ user.level }}">
+                @if(user.level > 0)
+                  <option value="1" selected="selected">Admin</option>
+                  <option value="0">Kasir</option>
+                @else
+                  <option value="1">Admin</option>
+                  <option value="0" selected="selected">Kasir</option>
+                @endif
+              </select>
+            </div>
+          </div>
+          <div class="card-footer">
+            <input type="submit" class="btn btn-primary" value="Update User">
+          </div>
+        </form>
+        
+      </div>
+    </div>
+  </div>
+  @endcomponent
+
+@endsection

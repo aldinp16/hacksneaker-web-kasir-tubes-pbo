@@ -1,0 +1,53 @@
+@layout('layouts/main.edge')
+
+@section('head')
+  @super
+  <title>Tambah User | Hack Sneaker</title>
+@endsection
+
+@section('content')
+
+  @component('components/content/header')
+  @endcomponent
+
+  @component('components/content/content')
+    <div class="row">
+      <div class="col-12">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fa fa-plus"></i> Detail User</h3>
+          </div>
+
+          <form role="form" action="{{ route('UsersController.store') }}" method="POST">
+            <div class="card-body">
+              <div class="form-group">
+                <label for="fullName">Nama Lengkap</label>
+                <input name="fullName" type="text" class="form-control" id="fullName" placeholder="Hongki Alfikram" required>
+              </div>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input name="email" type="email" class="form-control" id="email" placeholder="hongki@gmail.com">
+              </div>
+              <div class="form-group">
+                <label for="level">Level</label>
+                <select name="level" type="text" class="form-control" id="level">
+                  <option value="0">Kasir</option>
+                  <option value="1">Admin</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input name="password" type="password" class="form-control" id="password" placeholder="!Your123SecurePassword@@">
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <input type="submit" class="btn btn-primary" value="Tambahkan">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  @endcomponent
+
+@endsection

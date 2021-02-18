@@ -1,0 +1,128 @@
+@layout('layouts/main.edge')
+
+@section('head')
+  @super
+  <title>Invoice #{{transaction.id}} | Hack Sneaker</title>
+@endsection
+
+@section('content')
+
+  @component('components/content/header', { icon: 'fa fa-box', title: 'Invoice #' + transaction.id })
+    @if(auth.user.level > 0)
+      <form  method="POST" action="{{ route('TransactionsController.destroy', { id: transaction.id }) }}?_method=DELETE">
+        <button class="btn btn-danger float-lg-right m-1 text-light"><i class="fas fa-edit"></i> Hapus Transaksi</button>
+      </form>
+    @endif
+  @endcomponent
+
+  @component('components/content/content')
+    @if(flashMessages.has('success'))
+      <div class="alert alert-success alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <h5><i class="icon fas fa-info"></i> Alert!</h5>
+        {{ flashMessages.get('success') }}
+      </div>
+    @endif
+    <div class="row">
+      <div class="col-12">
+        <!-- Main content -->
+        <div class="invoice p-3 mb-3">
+          <!-- title row -->
+          <div class="row">
+            <div class="col-12">
+              <h4>
+                Hack Sneaker
+                <small class="float-right">Date: <span class="time">{{ transaction.createdAt }}</span></small>
+              </h4>
+            </div>
+            <!-- /.col -->
+          </div>
+          <!-- info row -->
+          <div class="row invoice-info">
+            <div class="col-sm-4 invoice-col">
+              <address>
+                Jl. Gatot Subroto No.293, Maleer, Kec. Batununggal<br>
+                Kota Bandung, Jawa Barat 40274<br>
+                Phone: 087815819551<br>
+                Email: hacksneakers@gmail.com
+              </address>
+            </div>
+            <!-- /.col -->
+            <div class="col-sm-4 invoice-col">
+              <b>Invoice #{{ transaction.id }}</b><br>
+              <b>Customer:</b> {{ transaction.customerName ? transaction.customerName : '-' }}<br />
+              <b>Cashier:</b> {{ transaction.user.fullName }}<br />
+            </div>
+            <!-- /.col -->
+            <div class="col-sm-4 invoice-col">
+              <b>Note</b>
+              <p>{{ transaction.note }}</p>
+            </div>
+          </div>
+          <!-- /.row -->
+
+          <!-- Table row -->
+          <div class="row">
+            <div class="col-12 table-responsive">
+              <table class="table table-striped">
+                <thead>
+                <tr>
+                  <th>Qty</th>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th>Discount</th>
+                  <th>Subtotal</th>
+                </tr>
+                </thead>
+                <tbody>
+                  @each(item in items)
+                    <tr>
+                      <td>{{ item.quantity }}</td>
+                      <td>{{ item.name }} </td>
+                      <td>Rp. {{ item.price }}</td>
+                      <td>{{ item.discount }}%/pair</td>
+                      <td>Rp. {{ item.subtotal }}</td>
+                    </tr>
+                  @endeach
+                </tbody>
+              </table>
+            </div>
+            <!-- /.col -->
+          </div>
+          <!-- /.row -->
+
+          <div class="row">
+            <!-- accepted payments column -->
+            <div class="col-6">
+              <p class="lead">Payment Methods: {{ transaction.paymentMethod }}</p>
+            </div>
+            <!-- /.col -->
+            <div class="col-6">
+
+              <div class="table-responsive">
+                <table class="table">
+                  <tr>
+                    <th style="width:50%">Subtotal:</th>
+                    <td>Rp. {{ subtotal }}</td>
+                  </tr>
+                  <tr>
+                    <th>Discount Voucher</th>
+                    <td>Rp. -{{ discount }} ({{ transaction.discount }}%)</td>
+                  </tr>
+                  <tr>
+                    <th>Total:</th>
+                    <td>Rp. {{ total }}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <!-- /.col -->
+          </div>
+          <!-- /.row -->
+        </div>
+        <!-- /.invoice -->
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  @endcomponent
+
+@endsection
