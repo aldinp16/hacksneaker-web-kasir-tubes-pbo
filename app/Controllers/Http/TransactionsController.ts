@@ -16,7 +16,7 @@ export default class TransactionsController {
     const transactionsResultModel = await transactionsQuery.preload('items').preload('user')
     const transactions = transactionsResultModel.map((transaction) => {
       const id = transaction.id
-      const cashier = transaction.user.fullName
+      const cashier = transaction.user?.fullName ? transaction.user.fullName : '-'
       const customer = transaction.customerName
       const quantity = transaction.items
         .map((item) => item.$extras.pivot_quantity)
@@ -48,7 +48,7 @@ export default class TransactionsController {
     await Promise.all([transaction.preload('user'), transaction.preload('items')])
 
     const isAdmin = (auth.user?.level as number) > 0
-    const notOwned = auth.user?.id !== transaction.user.id
+    const notOwned = auth.user?.id !== transaction.user?.id
     if (!isAdmin && notOwned) {
       return response.redirect('/notfound')
     }

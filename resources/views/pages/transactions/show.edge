@@ -51,7 +51,7 @@
             <div class="col-sm-4 invoice-col">
               <b>Invoice #{{ transaction.id }}</b><br>
               <b>Customer:</b> {{ transaction.customerName ? transaction.customerName : '-' }}<br />
-              <b>Cashier:</b> {{ transaction.user.fullName }}<br />
+              <b>Cashier:</b> {{ transaction.user?.fullName ? transaction.user.fullName : '-' }}<br />
             </div>
             <!-- /.col -->
             <div class="col-sm-4 invoice-col">

@@ -9,7 +9,7 @@ export default class Transactions extends BaseSchema {
       table.string('customer_name')
       table.string('payment_method')
       table.decimal('discount').defaultTo(0)
-      table.integer('user_id').references('id').inTable('users')
+      table.integer('user_id').references('id').inTable('users').onDelete('SET NULL')
       table.string('note')
       table.timestamps(true)
     })
