@@ -6,5 +6,145 @@
 @endsection
 
 @section('content')
-  <p>{{ auth.user.fullName }}</p>
+
+  @component('components/content/header')
+  @endcomponent
+
+  @component('components/content/content')
+    <h5>Summary</h5>
+    <div class="row">
+      <div class="col-lg-4 col-6">
+        <div class="small-box bg-info">
+          <div class="inner">
+            <h3>{{ widgetData.totalTransaction }}</h3>
+
+            <p>Total Transaction</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-shopping-cart"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-6">
+        <div class="small-box bg-success">
+          <div class="inner">
+            <h3>{{ widgetData.totalItem }}</h3>
+
+            <p>Total Item</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-box"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-6">
+        <div class="small-box bg-warning">
+          <div class="inner">
+            <h3>{{ widgetData.totalCashier }}</h3>
+
+            <p>Total Cashier</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-user"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-header border-0">
+            <h3 class="card-title">Top 5 Items</h3>
+          </div>
+          <div class="card-body table-responsive p-0">
+            <table class="table table-striped table-valign-middle">
+              <thead>
+              <tr>
+                <th>Product</th>
+                <th>Harga</th>
+                <th>Terbeli</th>
+              </tr>
+              </thead>
+              <tbody>
+                @each(item in top5item)
+                  <tr>
+                    <td>{{ item.full_name }}</td>
+                    <td>Rp. {{ item.price }}</td>
+                    <td>{{ item.quantity }}</td>
+                  </tr>
+                @endeach
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card card-info">
+          <div class="card-header">
+            <h3 class="card-title">Transaction Chart (Month)</h3>
+          </div>
+          <div class="card-body">
+            <div class="chart"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+              <canvas id="lineChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 488px;" width="488" height="250" class="chartjs-render-monitor"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endcomponent
 @endsection
+
+@section('script')
+  @super
+  <script src="/plugins/chart.js/Chart.min.js"></script>
+  <script>
+    var areaChartOptions = {
+      maintainAspectRatio : false,
+      responsive : true,
+      legend: {
+        display: false
+      },
+      scales: {
+        xAxes: [{
+          gridLines : {
+            display : false,
+          }
+        }],
+        yAxes: [{
+          gridLines : {
+            display : false,
+          }
+        }]
+      }
+    }
+
+    var areaChartData = {
+    labels  : {{{ JSON.stringify(lineChartDataSet.label) }}},
+    datasets: [
+      {
+        label               : 'Transaction',
+        backgroundColor     : 'rgba(60,141,188,0.9)',
+        borderColor         : 'rgba(60,141,188,0.8)',
+        pointRadius          : false,
+        pointColor          : '#3b8bba',
+        pointStrokeColor    : 'rgba(60,141,188,1)',
+        pointHighlightFill  : '#fff',
+        pointHighlightStroke: 'rgba(60,141,188,1)',
+        data                : {{{ JSON.stringify(lineChartDataSet.data) }}}
+      }
+    ]
+  }
+
+  var lineChartCanvas = $('#lineChart').get(0).getContext('2d')
+    var lineChartOptions = jQuery.extend(true, {}, areaChartOptions)
+    var lineChartData = jQuery.extend(true, {}, areaChartData)
+    lineChartData.datasets[0].fill = false;
+    lineChartOptions.datasetFill = false
+
+    var lineChart = new Chart(lineChartCanvas, { 
+      type: 'line',
+      data: lineChartData, 
+      options: lineChartOptions
+    })
+  </script>
+@endsection 

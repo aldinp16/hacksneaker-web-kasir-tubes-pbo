@@ -20,7 +20,7 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.on('/').render('pages/index').middleware(['auth'])
+Route.get('/', 'DashboardController.index').middleware(['auth'])
 Route.get('/api/products', 'ProductsController.selectApi').middleware(['auth'])
 Route.resource('/users', 'UsersController').middleware({ '*': ['auth', 'admin'] })
 Route.resource('/products', 'ProductsController').middleware({
