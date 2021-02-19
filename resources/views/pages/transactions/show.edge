@@ -9,9 +9,10 @@
 
   @component('components/content/header', { icon: 'fa fa-box', title: 'Invoice #' + transaction.id })
     @if(auth.user.level > 0)
-      <form  method="POST" action="{{ route('TransactionsController.destroy', { id: transaction.id }) }}?_method=DELETE">
+      <form onsubmit="return confirm('Are you sure?')" method="POST" action="{{ route('TransactionsController.destroy', { id: transaction.id }) }}?_method=DELETE">
         <button class="btn btn-danger float-lg-right m-1 text-light"><i class="fas fa-edit"></i> Hapus Transaksi</button>
       </form>
+      <button class="btn btn-primary float-lg-right m-1 text-light" onclick="window.print()"><i class="fas fa-print"></i> Cetak</button>
     @endif
   @endcomponent
 

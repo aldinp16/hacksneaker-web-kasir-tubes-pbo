@@ -10,7 +10,7 @@
   @component('components/content/header', { icon: 'fa fa-box', title: product.fullName })
     
     @if(auth.user.level > 0) 
-      <form  method="POST" action="{{ route('ProductsController.destroy', { id: product.id }) }}?_method=DELETE">
+      <form onsubmit="return confirm('Are you sure?')" method="POST" action="{{ route('ProductsController.destroy', { id: product.id }) }}?_method=DELETE">
         <button class="btn btn-danger float-lg-right m-1 text-light"><i class="fas fa-edit"></i> Delete Item</button>
       </form>
     @endif

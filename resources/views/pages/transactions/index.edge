@@ -53,7 +53,7 @@
                       </a>
 
                       @if(auth.user.level > 0)
-                        <form class="d-inline" method="POST" action="{{ route('TransactionsController.destroy', { id: transaction.id }) }}?_method=DELETE">
+                        <form onsubmit="return confirm('Are you sure?')" class="d-inline" method="POST" action="{{ route('TransactionsController.destroy', { id: transaction.id }) }}?_method=DELETE">
                           <button class="btn btn-danger btn-sm"><i class="fas fa-edit"></i> Delete Item</button>
                         </form>
                       @endif
